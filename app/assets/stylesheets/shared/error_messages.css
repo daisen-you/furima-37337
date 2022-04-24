@@ -9,3 +9,7 @@
   list-style: circle;
   color: rgb(182, 48, 0);
 }
+
+.devise-error-messages {
+  color: red;
+}
