@@ -62,6 +62,21 @@ RSpec.describe Item, type: :model do
         @item.valid?
         expect(@item.errors.full_messages).to include("Price should be half-width numbers")
       end
+      it '価格が300円未満では出品できない' do
+        @item.price = "299"
+        @item.valid?
+        expect(@item.errors.full_messages).to include("Price out of setting range")
+      end
+      it '価格が9_999_999円を超えると出品できない' do
+        @item.price = "15000000"
+        @item.valid?
+        expect(@item.errors.full_messages).to include("Price out of setting range")
+      end
+      it 'userが紐付いていなければ出品できない' do
+        @item.user = nil
+        @item.valid?
+        expect(@item.errors.full_messages).to include("User must exist")
+      end
     end
   end
 end
