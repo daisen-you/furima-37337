@@ -2,7 +2,10 @@ require 'rails_helper'
 
 RSpec.describe PurchasesBuyers, type: :model do
   before do
-    @purchases_buyers = FactoryBot.build(:purchases_buyers)
+    user = FactoryBot.create(:user)
+    item = FactoryBot.create(:item)
+    @purchases_buyers = FactoryBot.build(:purchases_buyers, user_id: user.id, item_id: item.id)
+    sleep 0.1
   end
 
   describe '配送先情報の保存' do
@@ -61,6 +64,16 @@ RSpec.describe PurchasesBuyers, type: :model do
         @purchases_buyers.phone_number = ''
         @purchases_buyers.valid?
         expect(@purchases_buyers.errors.full_messages).to include("Phone number can't be blank", "Phone number is invalid")
+      end
+      it '電話番号に半角数字以外を含むと保存できないこと' do
+        @purchases_buyers.phone_number = '０１２３４５６７８９'
+        @purchases_buyers.valid?
+        expect(@purchases_buyers.errors.full_messages).to include("Phone number is invalid")
+      end
+      it '電話番号が9桁以下だと保存できないこと' do
+        @purchases_buyers.phone_number = 12_345_678
+        @purchases_buyers.valid?
+        expect(@purchases_buyers.errors.full_messages).to include("Phone number is invalid")
       end
       it '電話番号が12桁以上あると保存できないこと' do
         @purchases_buyers.phone_number = 12_345_678_910_123_111
